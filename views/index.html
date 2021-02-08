@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real Time App</title>
+  </head>
+  <body>
+    <h1>Hello</h1>
+    From
+    <input id="fromI" type="text" />
+    To
+    <input id="toI" type="text" />
+    Message
+    <input id="messageI" type="text" />
+
+    <ul id="userList"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js"></script>
+    <script type="text/javascript">
+      const socket = io();
+
+      socket.on('message', (data) => console.log(data));
+
+      fromI.onkeyup = (e) => {
+        if (e.keyCode === 13) {
+          socket.emit('login', fromI.value.trim());
+        }
+      };
+
+      messageI.onkeyup = (e) => {
+        if (e.keyCode === 13) {
+          socket.emit('send_message', {
+            from: fromI.value.trim(),
+            message: messageI.value.trim(),
+            receiver: toI.value.trim(),
+          });
+        }
+      };
+
+      socket.on('new_login', (username) => {
+        alert(username);
+      });
+
+      socket.on('receive_message', ({ from, message }) => {
+        const newLi = document.createElement('li');
+        newLi.textContent = `${message} from ${from}`;
+
+        userList.appendChild(newLi);
+      });
+    </script>
+  </body>
+</html>
